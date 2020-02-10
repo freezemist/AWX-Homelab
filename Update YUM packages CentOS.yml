@@ -1,3 +1,7 @@
+---
+- hosts: all
+  become: true
+  tasks:
   - name: update the system
     yum:
       name: "*"
