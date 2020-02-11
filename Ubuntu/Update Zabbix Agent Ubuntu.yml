@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  tasks:
+     - name: Remove Zabbix Agent
+       shell: apt-get remove zabbix-agent
+     
+     - name: Install Zabbix Agent
+       shell: apt-get install zabbix-agent
+
+     - name: Set Zabbix Server
+       shell: sed -i 's|Server=127.0.0.1|Server=192.168.1.153|g' /etc/zabbix/zabbix_agentd.conf
+     
+     - name: Set Zabbix Hostname
+       shell: sed -i "s|Hostname=Zabbix server|Hostname=$HOSTNAME|g" /etc/zabbix/zabbix_agentd.conf
+
+     - name: Poke Hole in firewall
+       shell: ufw allow 10050/tcp
+
+     - name: Restart Zabbix Agent
+       shell: systemctl restart zabbix-agent
