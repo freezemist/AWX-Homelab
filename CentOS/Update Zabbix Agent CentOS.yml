@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  tasks:
+     - name: Remove Zabbix Agent
+       shell: yum -y remove zabbix-agent
+     
+     - name: Install Zabbix Agent
+       shell: yum -y install zabbix-agent
+
+     - name: Set Zabbix Server
+       shell: sed -i 's|Server=127.0.0.1|Server=Zabbix.Freezemist.Com|g' /etc/zabbix/zabbix_agentd.conf
+     
+     - name: Set Zabbix Hostname
+       shell: sed -i "s|Hostname=Zabbix server|Hostname=$HOSTNAME|g" /etc/zabbix/zabbix_agentd.conf
+     
+     - name: Set Firewalld exception
+       shell: sudo firewall-cmd --add-port=10050/tcp --permanent
+
+     - name: Reload Firewalld
+       shell: sudo firewall-cmd  --reload
+
+     - name: Restart Zabbix Agent
+       shell: service zabbix-agent restart
